@@ -25,26 +25,28 @@ import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
 import { Button } from "../ui/button";
 
-function SmartNudge() {
+function SmartNudge({ financialData }: { financialData: any }) {
   const [nudge, setNudge] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
+    if (!financialData) return;
+
     startTransition(async () => {
-      const mockInput = {
-        spendingData:
-          "Frequent purchases on Zomato and Swiggy, averaging 300 INR per order, 4 times a week. Subscription to Netflix and Amazon Prime. Monthly SIP of 5000 INR.",
-        financialGoals: "Save for a down payment on a house in 5 years.",
-        userProfile: "28 years old, software engineer, moderate risk tolerance.",
+      const personality = financialData.personality || "user";
+      const nudgeInput = {
+        spendingData: `User identifies as a ${personality}. Monthly savings are ${formatCurrency(financialData.monthlySavings)} out of ${formatCurrency(financialData.monthlyEarnings)} earnings.`,
+        financialGoals: "General goal is to improve financial health and increase net worth.",
+        userProfile: `A user with a net worth of ${formatCurrency(financialData.netWorth)}. They describe themselves as a '${personality}'.`,
       };
-      const result = await getSmartNudge(mockInput);
+      const result = await getSmartNudge(nudgeInput);
       if (result.success) {
         setNudge(result.data.nudge);
       } else {
         setNudge("Could not load a financial tip for you at the moment.");
       }
     });
-  }, []);
+  }, [financialData]);
 
   return (
     <Card className="h-full">
@@ -55,7 +57,7 @@ function SmartNudge() {
         <Bot className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent>
-        {isPending ? (
+        {isPending || !nudge ? (
           <div className="space-y-2">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-3/4" />
@@ -263,7 +265,7 @@ export function DashboardClient() {
       </div>
 
       <div className="lg:col-span-2 grid gap-4">
-        <SmartNudge />
+        <SmartNudge financialData={financialData} />
         <MilestoneTracker />
       </div>
     </div>
