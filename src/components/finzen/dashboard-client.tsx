@@ -5,7 +5,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useSearchParams } from 'next/navigation';
 import {
   Bot,
-  CircleDollarSign,
+  Wallet,
   Gauge,
   Loader2,
   TrendingUp,
@@ -185,7 +185,7 @@ export function DashboardClient() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-medium">Net Worth</CardTitle>
-              <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+              <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{formatCurrency(netWorth)}</div>
@@ -213,7 +213,7 @@ export function DashboardClient() {
               <CardTitle className="text-base font-medium">
                 Monthly Savings
               </CardTitle>
-              <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
+              <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{formatCurrency(monthlySavings)}</div>
