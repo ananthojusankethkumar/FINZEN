@@ -1,8 +1,8 @@
+
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
 import {
-  BarChart,
   Bot,
   CircleDollarSign,
   Gauge,
@@ -10,57 +10,18 @@ import {
   TrendingUp,
 } from "lucide-react";
 import {
-  Bar,
-  CartesianGrid,
-  Cell,
   Line,
   LineChart,
   ResponsiveContainer,
   Tooltip as RechartsTooltip,
   XAxis,
   YAxis,
+  CartesianGrid,
 } from "recharts";
-import { getSmartNudge } from "@/lib/actions";
+import { getSmartNudge, getCashFlowPrediction } from "@/lib/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "../ui/skeleton";
-
-const cashFlowData = [
-  { date: "Day 0", balance: 50000 },
-  { date: "Day 5", balance: 48000 },
-  { date: "Day 10", balance: 55000 },
-  { date: "Day 15", balance: 53000 },
-  { date: "Day 20", balance: 51000 },
-  { date: "Day 25", balance: 60000 },
-  { date: "Day 30", balance: 58000 },
-  { date: "Day 35", balance: 56000 },
-  { date: "Day 40", balance: 65000 },
-  { date: "Day 45", balance: 63000 },
-  { date: "Day 50", balance: 61000 },
-  { date: "Day 55", balance: 70000 },
-  { date: "Day 60", balance: 68000 },
-];
-
-const milestones = [
-  {
-    title: "Emergency Fund Goal",
-    goal: 100000,
-    current: 75000,
-    description: "Save for 6 months of expenses.",
-  },
-  {
-    title: "Goa Trip",
-    goal: 50000,
-    current: 12000,
-    description: "Get that much needed vacation.",
-  },
-  {
-    title: "New Phone",
-    goal: 80000,
-    current: 65000,
-    description: "Upgrade to the latest tech.",
-  },
-];
 
 function SmartNudge() {
   const [nudge, setNudge] = useState<string | null>(null);
@@ -111,37 +72,56 @@ function MilestoneTracker() {
       <CardHeader>
         <CardTitle className="font-headline text-lg">Gamified Milestones</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {milestones.map((milestone) => (
-          <div key={milestone.title}>
-            <div className="flex justify-between items-end mb-1">
-              <h4 className="font-semibold">{milestone.title}</h4>
-              <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">
-                  ₹{milestone.current.toLocaleString()}
-                </span>{" "}
-                / ₹{milestone.goal.toLocaleString()}
-              </p>
-            </div>
-            <Progress value={(milestone.current / milestone.goal) * 100} />
-          </div>
-        ))}
+      <CardContent className="space-y-6 text-center text-muted-foreground">
+        <p>Your progress towards financial goals will be shown here.</p>
       </CardContent>
     </Card>
   );
 }
 
 function ZenCastChart() {
-    return (
-        <Card>
-        <CardHeader>
-          <CardTitle className="font-headline text-lg flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            ZenCast™️: Predictive Cash Flow
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px] w-full">
+  const [cashFlowData, setCashFlowData] = useState<any[] | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    startTransition(async () => {
+      const mockAccountHistory = JSON.stringify([
+        { date: "2023-01-01", balance: 50000 },
+        { date: "2023-01-05", balance: 48000 },
+        { date: "2023-01-10", balance: 55000 },
+      ]);
+      const result = await getCashFlowPrediction({
+        accountHistory: mockAccountHistory,
+        forecastDays: 60,
+      });
+
+      if (result.success && result.data.forecast) {
+        const formattedData = result.data.forecast.map((d: any) => ({
+            date: d.date,
+            balance: d.balance
+        }));
+        setCashFlowData(formattedData);
+      } else {
+        setCashFlowData([]);
+      }
+    });
+  }, []);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="font-headline text-lg flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 text-primary" />
+          ZenCast™️: Predictive Cash Flow
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[300px] w-full">
+          {isPending || !cashFlowData ? (
+            <div className="flex h-full items-center justify-center">
+              {isPending ? <Loader2 className="h-8 w-8 animate-spin text-primary" /> : <p>Could not load chart data.</p>}
+            </div>
+          ) : (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={cashFlowData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
@@ -178,10 +158,11 @@ function ZenCastChart() {
                 />
               </LineChart>
             </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-    );
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
 }
 
 export function DashboardClient() {
@@ -215,12 +196,12 @@ export function DashboardClient() {
               </p>
             </CardContent>
           </Card>
-           <Card>
+          <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-medium">
                 Monthly Savings
               </CardTitle>
-              <BarChart className="h-4 w-4 text-muted-foreground" />
+              <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">₹25,000</div>

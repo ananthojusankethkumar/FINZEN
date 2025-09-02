@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview Flow for forecasting user's account balance for the next 30-90 days.
@@ -17,7 +18,7 @@ const PredictCashFlowInputSchema = z.object({
 export type PredictCashFlowInput = z.infer<typeof PredictCashFlowInputSchema>;
 
 const PredictCashFlowOutputSchema = z.object({
-  forecast: z.string().describe('The predicted cash flow for the next 30-90 days in JSON format.'),
+  forecast: z.string().describe('The predicted cash flow for the next 30-90 days in JSON format. The format should be an array of objects with "date" and "balance" properties.'),
   summary: z.string().describe('A summary of potential shortfalls or surplus cash.'),
 });
 export type PredictCashFlowOutput = z.infer<typeof PredictCashFlowOutputSchema>;
@@ -35,14 +36,11 @@ const prompt = ai.definePrompt({
   Given the following account history:
   {{accountHistory}}
 
-  Forecast the cash flow for the next {{forecastDays}} days.
+  Forecast the cash flow for the next {{forecastDays}} days. The forecast should be an array of objects, each with a "date" (e.g., "Day 5", "Day 10") and "balance" property.
 
   Provide a summary of potential shortfalls or surplus cash.
-  Return the forecast and summary in JSON format:
-  {
-    "forecast": "",
-    "summary": ""
-  }`,
+  Return the forecast and summary in a JSON object.
+  `,
 });
 
 const predictCashFlowFlow = ai.defineFlow(

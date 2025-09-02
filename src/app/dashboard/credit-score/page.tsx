@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
@@ -9,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Gauge, Sparkles } from "lucide-react";
+import { Gauge, Sparkles, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CreditScorePage() {
@@ -17,14 +18,21 @@ export default function CreditScorePage() {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const creditScore = 780;
-  const scoreCategory = "Excellent";
-  const scoreColor = "text-green-500";
+  // These would typically come from an API
+  const [creditScore, setCreditScore] = useState(780);
+  const [scoreCategory, setScoreCategory] = useState("Excellent");
+
+  const scoreColor =
+    creditScore >= 750
+      ? "text-green-500"
+      : creditScore >= 650
+      ? "text-yellow-500"
+      : "text-red-500";
 
   useEffect(() => {
     startTransition(async () => {
       const mockInput = {
-        creditScore: 780,
+        creditScore: creditScore,
         paymentHistory: "100% on-time payments for the last 36 months. No defaults or late payments recorded.",
         creditUtilization: "Currently at 25%. A mix of 2 credit cards and 1 home loan. Oldest credit line is 7 years.",
       };
@@ -35,7 +43,7 @@ export default function CreditScorePage() {
         setError(result.error);
       }
     });
-  }, []);
+  }, [creditScore]);
 
   return (
     <div className="grid gap-6 md:grid-cols-3">
@@ -58,7 +66,7 @@ export default function CreditScorePage() {
                     />
                     <path
                         className="text-primary"
-                        strokeDasharray={`${(creditScore - 300) / 6}, 100`}
+                        strokeDasharray={`${((creditScore - 300) / 600) * 100}, 100`}
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                         fill="none"
                         stroke="currentColor"
@@ -88,10 +96,8 @@ export default function CreditScorePage() {
         </CardHeader>
         <CardContent>
           {isPending ? (
-            <div className="space-y-4">
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : error ? (
             <p className="text-destructive">{error}</p>

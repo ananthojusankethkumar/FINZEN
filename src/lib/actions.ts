@@ -1,3 +1,4 @@
+
 "use server";
 
 import { z } from "zod";
@@ -7,7 +8,6 @@ import {
 } from "@/ai/flows/credit-score-maximizer";
 import {
   generateFinancialReport,
-  GenerateFinancialReportInput,
 } from "@/ai/flows/personalized-financial-pdf-report";
 import {
   predictCashFlow,
@@ -34,10 +34,26 @@ export async function getCreditScoreAdvice(input: CreditScoreMaximizerInput) {
   }
 }
 
-export async function getFinancialReport(input: GenerateFinancialReportInput) {
+const financialReportSchema = z.object({
+  userDetails: z.string().min(5, "Please describe your user details."),
+  accountDetails: z.string().min(10, "Please describe your account details."),
+  investmentDetails: z.string().min(10, "Please describe your investment details."),
+  spendingPatterns: z.string().min(10, "Please describe your spending patterns."),
+  creditScore: z.string().min(3, "Please enter a valid credit score."),
+});
+
+export async function getFinancialReport(prevState: any, formData: FormData) {
+  const validatedFields = financialReportSchema.safeParse(Object.fromEntries(formData.entries()));
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+  
   try {
-    const result = await generateFinancialReport(input);
-    return { success: true, data: result };
+    const result = await generateFinancialReport(validatedFields.data);
+    return { data: result, errors: null };
   } catch (error) {
     return { success: false, error: "Failed to generate financial report." };
   }
@@ -50,6 +66,7 @@ export async function getCashFlowPrediction(input: PredictCashFlowInput) {
     const forecastData = JSON.parse(result.forecast);
     return { success: true, data: { ...result, forecast: forecastData } };
   } catch (error) {
+    console.error(error);
     return { success: false, error: "Failed to predict cash flow." };
   }
 }
