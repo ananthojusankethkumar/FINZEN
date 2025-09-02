@@ -8,6 +8,8 @@ import {
   Wallet,
   Loader2,
   TrendingUp,
+  Gauge,
+  Trophy,
 } from "lucide-react";
 import {
   Line,
@@ -19,9 +21,10 @@ import {
   CartesianGrid,
 } from "recharts";
 import { getSmartNudge, getCashFlowPrediction } from "@/lib/actions";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "../ui/skeleton";
 import Link from "next/link";
+import { Button } from "../ui/button";
 
 function SmartNudge() {
   const [nudge, setNudge] = useState<string | null>(null);
@@ -70,10 +73,19 @@ function MilestoneTracker() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline text-lg">Gamified Milestones</CardTitle>
+        <CardTitle className="font-headline text-lg flex items-center gap-2">
+          <Trophy className="h-5 w-5 text-primary" />
+          Gamified Milestones
+        </CardTitle>
+        <CardDescription>
+          Create and track your financial goals.
+        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6 text-center text-muted-foreground">
-        <p>Your progress towards financial goals will be shown here.</p>
+      <CardContent className="space-y-6 text-muted-foreground">
+        <p>Set up savings goals, track your progress, and celebrate your achievements to build strong financial habits.</p>
+        <Button asChild>
+            <Link href="/dashboard/milestones">Manage Milestones</Link>
+        </Button>
       </CardContent>
     </Card>
   );
@@ -98,11 +110,16 @@ function ZenCastChart() {
       });
 
       if (result.success && result.data.forecast) {
-        const formattedData = result.data.forecast.map((d: any) => ({
-            date: d.date,
-            balance: d.balance
-        }));
-        setCashFlowData(formattedData);
+        try {
+          const formattedData = result.data.forecast.map((d: any) => ({
+              date: d.date,
+              balance: d.balance
+          }));
+          setCashFlowData(formattedData);
+        } catch (e) {
+          console.error("Failed to parse forecast data", e);
+          setCashFlowData([]);
+        }
       } else {
         setCashFlowData([]);
       }
@@ -176,8 +193,8 @@ function formatCurrency(value: string | null) {
 
 export function DashboardClient() {
   const searchParams = useSearchParams();
-  const netWorth = searchParams.get('netWorth') ?? '0';
-  const monthlySavings = searchParams.get('monthlySavings') ?? '0';
+  const netWorth = searchParams.get('netWorth');
+  const monthlySavings = searchParams.get('monthlySavings');
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -200,7 +217,9 @@ export function DashboardClient() {
               <CardTitle className="text-base font-medium">
                 Credit Score
               </CardTitle>
-               <Link href="/dashboard/credit-score" className="h-4 w-4 text-muted-foreground" />
+               <Link href="/dashboard/credit-score">
+                <Gauge className="h-4 w-4 text-muted-foreground" />
+               </Link>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">780</div>

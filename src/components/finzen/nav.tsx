@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -9,6 +10,7 @@ import {
   Recycle,
   Settings,
   Sparkles,
+  Trophy,
   Wallet,
 } from "lucide-react";
 
@@ -21,6 +23,7 @@ import {
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/dashboard/milestones", icon: Trophy, label: "Milestones" },
   { href: "/dashboard/credit-score", icon: Gauge, label: "Credit Score" },
   { href: "/dashboard/tax-forecast", icon: Wallet, label: "Tax Forecast" },
   { href: "/dashboard/ripple-effect", icon: Recycle, label: "Ripple Effect" },
