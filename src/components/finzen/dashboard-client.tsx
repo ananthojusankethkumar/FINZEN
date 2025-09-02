@@ -99,10 +99,12 @@ function ZenCastChart({ financialData }: { financialData: any }) {
   const monthlySavings = financialData?.monthlySavings ?? '0';
 
   useEffect(() => {
+    if (!financialData) return;
+    
     startTransition(async () => {
       const accountHistory = JSON.stringify([
-        { date: "Start", balance: Number(monthlyEarnings) },
-        { date: "Month End", balance: Number(monthlySavings) },
+        { date: "Start", balance: Number(financialData.netWorth || '0') },
+        { date: "Month End", balance: Number(financialData.netWorth || '0') + Number(monthlySavings) },
       ]);
       const result = await getCashFlowPrediction({
         accountHistory: accountHistory,
@@ -124,7 +126,7 @@ function ZenCastChart({ financialData }: { financialData: any }) {
         setCashFlowData([]);
       }
     });
-  }, [monthlyEarnings, monthlySavings]);
+  }, [financialData, monthlySavings]);
 
   return (
     <Card>
@@ -165,7 +167,7 @@ function ZenCastChart({ financialData }: { financialData: any }) {
                     color: "hsl(var(--card-foreground))",
                   }}
                   labelStyle={{ color: "hsl(var(--card-foreground))" }}
-                  formatter={(value) => [`${Number(value).toLocaleString()}`, "Balance"]}
+                  formatter={(value) => [Number(value).toLocaleString(), "Balance"]}
                 />
                 <Line
                   type="monotone"
@@ -205,6 +207,7 @@ export function DashboardClient() {
 
   const netWorth = financialData?.netWorth;
   const monthlySavings = financialData?.monthlySavings;
+  const monthlyEarnings = financialData?.monthlyEarnings;
 
   if (!financialData) {
     return (
@@ -233,16 +236,14 @@ export function DashboardClient() {
           <Card>
              <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-medium">
-                Credit Score
+                Monthly Income
               </CardTitle>
-               <Link href="/dashboard/credit-score">
-                <Gauge className="h-4 w-4 text-muted-foreground" />
-               </Link>
+               <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">780</div>
+              <div className="text-2xl font-bold">{formatCurrency(monthlyEarnings)}</div>
               <p className="text-xs text-muted-foreground">
-                Excellent
+                Your current monthly earnings.
               </p>
             </CardContent>
           </Card>
