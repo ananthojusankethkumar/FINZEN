@@ -64,7 +64,7 @@ export default function OnboardingPage() {
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="monthlyEarnings">Monthly Earnings (₹)</Label>
+                <Label htmlFor="monthlyEarnings">Monthly Earnings</Label>
                 <Input
                   id="monthlyEarnings"
                   name="monthlyEarnings"
@@ -76,7 +76,7 @@ export default function OnboardingPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="monthlySavings">Monthly Savings (₹)</Label>
+                <Label htmlFor="monthlySavings">Monthly Savings</Label>
                 <Input
                   id="monthlySavings"
                   name="monthlySavings"
@@ -89,7 +89,7 @@ export default function OnboardingPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="netWorth">Total Net Worth (₹)</Label>
+              <Label htmlFor="netWorth">Total Net Worth</Label>
               <Input
                 id="netWorth"
                 name="netWorth"
