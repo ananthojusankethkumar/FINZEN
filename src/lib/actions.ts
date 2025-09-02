@@ -23,8 +23,84 @@ import {
   smartNudgeSystem,
   SmartNudgeSystemInput,
 } from "@/ai/flows/smart-nudge-system";
+import { auth } from "@/lib/firebase";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
+import { redirect } from "next/navigation";
 
 
+// AUTH ACTIONS
+const loginSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+export async function login(prevState: any, formData: FormData) {
+  const validatedFields = loginSchema.safeParse(
+    Object.fromEntries(formData.entries())
+  );
+
+  if (!validatedFields.success) {
+    return {
+      message: "Invalid email or password.",
+    };
+  }
+
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      validatedFields.data.email,
+      validatedFields.data.password
+    );
+  } catch (e: any) {
+    return { message: "Login failed. Please check your credentials." };
+  }
+
+  return redirect("/dashboard");
+}
+
+const signupSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+export async function signup(prevState: any, formData: FormData) {
+   const validatedFields = signupSchema.safeParse(
+    Object.fromEntries(formData.entries())
+  );
+
+  if (!validatedFields.success) {
+    return {
+      message: "Invalid email or password (must be at least 6 characters).",
+    };
+  }
+
+  try {
+    await createUserWithEmailAndPassword(
+      auth,
+      validatedFields.data.email,
+      validatedFields.data.password
+    );
+  } catch (e: any) {
+     if (e.code === 'auth/email-already-in-use') {
+        return { message: 'This email address is already in use.' };
+    }
+    return { message: "Signup failed. Please try again." };
+  }
+
+  return redirect("/onboarding");
+}
+
+export async function logout() {
+  await signOut(auth);
+  return redirect("/");
+}
+
+
+// AI ACTIONS
 export async function getCreditScoreAdvice(input: CreditScoreMaximizerInput) {
   try {
     const result = await creditScoreMaximizer(input);

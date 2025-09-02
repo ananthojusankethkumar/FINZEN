@@ -21,12 +21,29 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { logout } from "@/lib/actions";
+import { auth } from "@/lib/firebase";
+import { redirect } from "next/navigation";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = auth.currentUser;
+
+  // This is a server component, but auth state is client-side.
+  // A proper implementation would use a client component with useEffect to check auth state,
+  // or a server-side session management solution.
+  // For this prototype, we'll assume a user is logged in if they hit this page,
+  // but a real app needs more robust protection.
+  
+  // A simple redirect if no user is found on the server (might not work as expected with client-side auth)
+  // if (!user) {
+  //   redirect('/login');
+  // }
+
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -70,7 +87,9 @@ export default function DashboardLayout({
               <DropdownMenuItem>Support</DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/">Logout</Link>
+                <form action={logout} className="w-full">
+                    <button type="submit" className="w-full text-left">Logout</button>
+                </form>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
