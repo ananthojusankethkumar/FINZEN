@@ -149,7 +149,7 @@ function ZenCastChart() {
                     color: "hsl(var(--card-foreground))",
                   }}
                   labelStyle={{ color: "hsl(var(--card-foreground))" }}
-                  formatter={(value) => [`${Number(value).toLocaleString()}`, "Balance"]}
+                  formatter={(value) => [`₹${Number(value).toLocaleString()}`, "Balance"]}
                 />
                 <Line
                   type="monotone"
@@ -168,9 +168,11 @@ function ZenCastChart() {
   );
 }
 
-function formatNumber(value: string | null) {
-    if (!value) return "0";
-    return Number(value).toLocaleString("en-IN");
+function formatCurrency(value: string | null) {
+    if (!value) return "INR 0";
+    const number = Number(value);
+    if (isNaN(number)) return "INR 0";
+    return `INR ${number.toLocaleString("en-IN")}`;
 }
 
 export function DashboardClient() {
@@ -188,7 +190,7 @@ export function DashboardClient() {
               <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatNumber(netWorth)}</div>
+              <div className="text-2xl font-bold">{formatCurrency(netWorth)}</div>
               <p className="text-xs text-muted-foreground">
                 Based on your provided data.
               </p>
@@ -216,7 +218,7 @@ export function DashboardClient() {
               <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatNumber(monthlySavings)}</div>
+              <div className="text-2xl font-bold">{formatCurrency(monthlySavings)}</div>
                <p className="text-xs text-muted-foreground">
                 Your current monthly target.
               </p>
