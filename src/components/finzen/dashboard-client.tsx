@@ -5,6 +5,7 @@ import {
   BarChart,
   Bot,
   CircleDollarSign,
+  Gauge,
   Loader2,
   TrendingUp,
 } from "lucide-react";
