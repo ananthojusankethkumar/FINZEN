@@ -1,6 +1,7 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { getTaxForecast } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,7 +38,7 @@ function SubmitButton() {
 }
 
 export default function TaxForecastPage() {
-  const [state, formAction] = useFormState(getTaxForecast, initialState);
+  const [state, formAction] = useActionState(getTaxForecast, initialState);
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
