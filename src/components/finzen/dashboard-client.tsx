@@ -140,7 +140,7 @@ function ZenCastChart() {
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={(value) => `₹${Number(value) / 1000}k`}
+                  tickFormatter={(value) => `${Number(value) / 1000}k`}
                 />
                 <RechartsTooltip
                   contentStyle={{
@@ -149,7 +149,7 @@ function ZenCastChart() {
                     color: "hsl(var(--card-foreground))",
                   }}
                   labelStyle={{ color: "hsl(var(--card-foreground))" }}
-                  formatter={(value) => [`₹${Number(value).toLocaleString()}`, "Balance"]}
+                  formatter={(value) => [`${Number(value).toLocaleString()}`, "Balance"]}
                 />
                 <Line
                   type="monotone"
@@ -168,9 +168,9 @@ function ZenCastChart() {
   );
 }
 
-function formatCurrency(value: string | null) {
-    if (!value) return "₹0";
-    return `₹${Number(value).toLocaleString("en-IN")}`;
+function formatNumber(value: string | null) {
+    if (!value) return "0";
+    return Number(value).toLocaleString("en-IN");
 }
 
 export function DashboardClient() {
@@ -188,7 +188,7 @@ export function DashboardClient() {
               <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(netWorth)}</div>
+              <div className="text-2xl font-bold">{formatNumber(netWorth)}</div>
               <p className="text-xs text-muted-foreground">
                 Based on your provided data.
               </p>
@@ -216,7 +216,7 @@ export function DashboardClient() {
               <Wallet className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{formatCurrency(monthlySavings)}</div>
+              <div className="text-2xl font-bold">{formatNumber(monthlySavings)}</div>
                <p className="text-xs text-muted-foreground">
                 Your current monthly target.
               </p>
