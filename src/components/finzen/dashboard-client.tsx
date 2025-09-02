@@ -2,7 +2,6 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { useSearchParams } from 'next/navigation';
 import {
   Bot,
   Wallet,
@@ -91,12 +90,11 @@ function MilestoneTracker() {
   );
 }
 
-function ZenCastChart() {
-  const searchParams = useSearchParams();
+function ZenCastChart({ financialData }: { financialData: any }) {
   const [cashFlowData, setCashFlowData] = useState<any[] | null>(null);
   const [isPending, startTransition] = useTransition();
-  const monthlyEarnings = searchParams.get('monthlyEarnings') ?? '0';
-  const monthlySavings = searchParams.get('monthlySavings') ?? '0';
+  const monthlyEarnings = financialData?.monthlyEarnings ?? '0';
+  const monthlySavings = financialData?.monthlySavings ?? '0';
 
   useEffect(() => {
     startTransition(async () => {
@@ -192,9 +190,27 @@ function formatCurrency(value: string | null) {
 }
 
 export function DashboardClient() {
-  const searchParams = useSearchParams();
-  const netWorth = searchParams.get('netWorth');
-  const monthlySavings = searchParams.get('monthlySavings');
+  const [financialData, setFinancialData] = useState<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedData = localStorage.getItem("finzenUserData");
+      if (savedData) {
+        setFinancialData(JSON.parse(savedData));
+      }
+    }
+  }, []);
+
+  const netWorth = financialData?.netWorth;
+  const monthlySavings = financialData?.monthlySavings;
+
+  if (!financialData) {
+    return (
+        <div className="flex justify-center items-center h-full">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+    )
+  }
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -243,7 +259,7 @@ export function DashboardClient() {
             </CardContent>
           </Card>
         </div>
-        <ZenCastChart />
+        <ZenCastChart financialData={financialData} />
       </div>
 
       <div className="lg:col-span-2 grid gap-4">

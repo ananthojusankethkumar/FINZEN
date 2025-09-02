@@ -40,8 +40,11 @@ export default function OnboardingPage() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const query = new URLSearchParams(formData).toString();
-    router.push(`/dashboard?${query}`);
+    // Save to localStorage
+    if (typeof window !== "undefined") {
+      localStorage.setItem("finzenUserData", JSON.stringify(formData));
+    }
+    router.push(`/dashboard`);
   };
 
   return (
