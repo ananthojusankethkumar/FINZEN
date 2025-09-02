@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Bot, Gauge, Recycle, Sparkles, TrendingUp, Wallet } from 'lucide-react';
+import { ArrowRight, Bot, Gauge, Recycle, Sparkles, TrendingUp, Wallet, Users } from 'lucide-react';
 import { FinzenLogo } from '@/components/finzen/icons';
 
 const features = [
@@ -21,9 +21,9 @@ const features = [
     description: 'Receive gentle, intelligent nudges to build powerful financial habits.',
   },
   {
-    icon: <Recycle className="h-8 w-8 text-primary" />,
-    title: 'Ripple Effect Analysis',
-    description: 'Simulate financial decisions and see their impact on your long-term goals.',
+    icon: <Users className="h-8 w-8 text-primary" />,
+    title: 'Finzen Legacy',
+    description: 'Collaborative, multi-generational financial planning for your entire family.',
   },
   {
     icon: <Gauge className="h-8 w-8 text-primary" />,

@@ -11,6 +11,7 @@ import {
   Settings,
   Sparkles,
   Trophy,
+  Users,
   Wallet,
 } from "lucide-react";
 
@@ -24,6 +25,7 @@ import {
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/dashboard/milestones", icon: Trophy, label: "Milestones" },
+  { href: "/dashboard/legacy", icon: Users, label: "Legacy" },
   { href: "/dashboard/credit-score", icon: Gauge, label: "Credit Score" },
   { href: "/dashboard/tax-forecast", icon: Wallet, label: "Tax Forecast" },
   { href: "/dashboard/ripple-effect", icon: Recycle, label: "Ripple Effect" },
@@ -39,7 +41,7 @@ export function MainNav() {
         <SidebarMenuItem key={item.href}>
           <Link href={item.href}>
             <SidebarMenuButton
-              isActive={pathname === item.href}
+              isActive={pathname.startsWith(item.href) && (item.href !== '/dashboard' || pathname === '/dashboard')}
               tooltip={item.label}
             >
               <item.icon />
