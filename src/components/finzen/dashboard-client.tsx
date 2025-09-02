@@ -6,7 +6,6 @@ import { useSearchParams } from 'next/navigation';
 import {
   Bot,
   Wallet,
-  Gauge,
   Loader2,
   TrendingUp,
 } from "lucide-react";
@@ -22,6 +21,7 @@ import {
 import { getSmartNudge, getCashFlowPrediction } from "@/lib/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "../ui/skeleton";
+import Link from "next/link";
 
 function SmartNudge() {
   const [nudge, setNudge] = useState<string | null>(null);
@@ -80,20 +80,20 @@ function MilestoneTracker() {
 }
 
 function ZenCastChart() {
+  const searchParams = useSearchParams();
   const [cashFlowData, setCashFlowData] = useState<any[] | null>(null);
   const [isPending, startTransition] = useTransition();
+  const monthlyEarnings = searchParams.get('monthlyEarnings') ?? '0';
+  const monthlySavings = searchParams.get('monthlySavings') ?? '0';
 
   useEffect(() => {
     startTransition(async () => {
-      // In a real app, you'd get the actual account history.
-      // We'll use a simplified history to generate a forecast.
-      const mockAccountHistory = JSON.stringify([
-        { date: "2023-01-01", balance: 50000 },
-        { date: "2023-01-05", balance: 48000 },
-        { date: "2023-01-10", balance: 55000 },
+      const accountHistory = JSON.stringify([
+        { date: "Start", balance: Number(monthlyEarnings) },
+        { date: "Month End", balance: Number(monthlySavings) },
       ]);
       const result = await getCashFlowPrediction({
-        accountHistory: mockAccountHistory,
+        accountHistory: accountHistory,
         forecastDays: 60,
       });
 
@@ -104,11 +104,10 @@ function ZenCastChart() {
         }));
         setCashFlowData(formattedData);
       } else {
-        // Fallback data for chart display if API fails
         setCashFlowData([]);
       }
     });
-  }, []);
+  }, [monthlyEarnings, monthlySavings]);
 
   return (
     <Card>
@@ -149,7 +148,7 @@ function ZenCastChart() {
                     color: "hsl(var(--card-foreground))",
                   }}
                   labelStyle={{ color: "hsl(var(--card-foreground))" }}
-                  formatter={(value) => [`₹${Number(value).toLocaleString()}`, "Balance"]}
+                  formatter={(value) => [`${Number(value).toLocaleString()}`, "Balance"]}
                 />
                 <Line
                   type="monotone"
@@ -197,11 +196,11 @@ export function DashboardClient() {
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
+             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-medium">
                 Credit Score
               </CardTitle>
-              <Gauge className="h-4 w-4 text-muted-foreground" />
+               <Link href="/dashboard/credit-score" className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">780</div>
