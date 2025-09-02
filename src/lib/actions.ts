@@ -63,8 +63,10 @@ export async function login(prevState: any, formData: FormData) {
 }
 
 const signupSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
+  fullName: z.string().min(2, "Full name must be at least 2 characters."),
+  phoneNumber: z.string().min(10, "Please enter a valid phone number."),
+  email: z.string().email("Please enter a valid email."),
+  password: z.string().min(6, "Password must be at least 6 characters."),
 });
 
 export async function signup(prevState: any, formData: FormData) {
@@ -74,7 +76,8 @@ export async function signup(prevState: any, formData: FormData) {
 
   if (!validatedFields.success) {
     return {
-      message: "Invalid email or password (must be at least 6 characters).",
+      message: "Please correct the errors below.",
+      errors: validatedFields.error.flatten().fieldErrors,
     };
   }
 
@@ -84,11 +87,13 @@ export async function signup(prevState: any, formData: FormData) {
       validatedFields.data.email,
       validatedFields.data.password
     );
+    // Here you would typically save the additional user data (fullName, phoneNumber)
+    // to a database like Firestore, linked to the user's UID.
   } catch (e: any) {
      if (e.code === 'auth/email-already-in-use') {
-        return { message: 'This email address is already in use.' };
+        return { message: 'This email address is already in use.', errors: null };
     }
-    return { message: "Signup failed. Please try again." };
+    return { message: "Signup failed. Please try again.", errors: null };
   }
 
   return redirect("/onboarding");

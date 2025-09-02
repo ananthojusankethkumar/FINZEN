@@ -22,6 +22,7 @@ import { Loader2 } from "lucide-react";
 
 const initialState = {
   message: "",
+  errors: null,
 };
 
 function SubmitButton() {
@@ -61,6 +62,27 @@ export default function SignupPage() {
                 <AlertDescription>{state.message}</AlertDescription>
               </Alert>
             )}
+             <div className="space-y-2">
+              <Label htmlFor="fullName">Full Name</Label>
+              <Input
+                id="fullName"
+                name="fullName"
+                placeholder="e.g., John Doe"
+                required
+              />
+               {state?.errors?.fullName && <p className="text-sm text-destructive">{state.errors.fullName[0]}</p>}
+            </div>
+             <div className="space-y-2">
+              <Label htmlFor="phoneNumber">Phone Number</Label>
+              <Input
+                id="phoneNumber"
+                name="phoneNumber"
+                type="tel"
+                placeholder="e.g., +91 9876543210"
+                required
+              />
+              {state?.errors?.phoneNumber && <p className="text-sm text-destructive">{state.errors.phoneNumber[0]}</p>}
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -70,6 +92,7 @@ export default function SignupPage() {
                 placeholder="m@example.com"
                 required
               />
+               {state?.errors?.email && <p className="text-sm text-destructive">{state.errors.email[0]}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -80,6 +103,7 @@ export default function SignupPage() {
                 placeholder="••••••••"
                 required
               />
+               {state?.errors?.password && <p className="text-sm text-destructive">{state.errors.password[0]}</p>}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
