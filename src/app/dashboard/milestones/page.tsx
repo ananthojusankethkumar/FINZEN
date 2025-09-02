@@ -33,14 +33,8 @@ interface Milestone {
   completed: boolean;
 }
 
-const initialMilestones: Milestone[] = [
-    { id: 1, name: "Emergency Fund", targetAmount: 100000, currentAmount: 75000, completed: false },
-    { id: 2, name: "Vacation to Goa", targetAmount: 50000, currentAmount: 15000, completed: false },
-    { id: 3, name: "New Laptop", targetAmount: 120000, currentAmount: 120000, completed: true },
-];
-
 export default function MilestonesPage() {
-  const [milestones, setMilestones] = useState<Milestone[]>(initialMilestones);
+  const [milestones, setMilestones] = useState<Milestone[]>([]);
   const [newMilestone, setNewMilestone] = useState({ name: "", targetAmount: "" });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -76,7 +70,7 @@ export default function MilestonesPage() {
     }));
   };
 
-  const formatCurrency = (value: number) => `₹${value.toLocaleString("en-IN")}`;
+  const formatCurrency = (value: number) => `INR ${value.toLocaleString("en-IN")}`;
 
   return (
     <div className="space-y-6">
@@ -101,7 +95,7 @@ export default function MilestonesPage() {
                     <Input id="milestone-name" placeholder="e.g., Downpayment for a Car" value={newMilestone.name} onChange={(e) => setNewMilestone({...newMilestone, name: e.target.value})} />
                 </div>
                  <div className="space-y-2">
-                    <Label htmlFor="milestone-target">Target Amount (₹)</Label>
+                    <Label htmlFor="milestone-target">Target Amount (INR)</Label>
                     <Input id="milestone-target" type="number" placeholder="e.g., 200000" value={newMilestone.targetAmount} onChange={(e) => setNewMilestone({...newMilestone, targetAmount: e.target.value})} />
                 </div>
             </div>
@@ -130,9 +124,9 @@ export default function MilestonesPage() {
               <Progress value={(milestone.currentAmount / milestone.targetAmount) * 100} />
               {!milestone.completed && (
                 <div className="flex gap-2">
-                     <Button size="sm" variant="outline" onClick={() => handleUpdateProgress(milestone.id, 5000)}>+ ₹5k</Button>
-                     <Button size="sm" variant="outline" onClick={() => handleUpdateProgress(milestone.id, 10000)}>+ ₹10k</Button>
-                     <Button size="sm" variant="outline" onClick={() => handleUpdateProgress(milestone.id, 25000)}>+ ₹25k</Button>
+                     <Button size="sm" variant="outline" onClick={() => handleUpdateProgress(milestone.id, 5000)}>+ INR 5k</Button>
+                     <Button size="sm" variant="outline" onClick={() => handleUpdateProgress(milestone.id, 10000)}>+ INR 10k</Button>
+                     <Button size="sm" variant="outline" onClick={() => handleUpdateProgress(milestone.id, 25000)}>+ INR 25k</Button>
                 </div>
               )}
             </CardContent>
@@ -144,6 +138,12 @@ export default function MilestonesPage() {
           </Card>
         ))}
       </div>
+      {milestones.length === 0 && (
+        <div className="text-center text-muted-foreground py-12">
+            <p>You haven't set any milestones yet.</p>
+            <p>Click "Add New Milestone" to get started!</p>
+        </div>
+      )}
     </div>
   );
 }
