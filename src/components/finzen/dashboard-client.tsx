@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { useSearchParams } from 'next/navigation';
 import {
   Bot,
   CircleDollarSign,
@@ -20,7 +21,6 @@ import {
 } from "recharts";
 import { getSmartNudge, getCashFlowPrediction } from "@/lib/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "../ui/skeleton";
 
 function SmartNudge() {
@@ -85,6 +85,8 @@ function ZenCastChart() {
 
   useEffect(() => {
     startTransition(async () => {
+      // In a real app, you'd get the actual account history.
+      // We'll use a simplified history to generate a forecast.
       const mockAccountHistory = JSON.stringify([
         { date: "2023-01-01", balance: 50000 },
         { date: "2023-01-05", balance: 48000 },
@@ -102,6 +104,7 @@ function ZenCastChart() {
         }));
         setCashFlowData(formattedData);
       } else {
+        // Fallback data for chart display if API fails
         setCashFlowData([]);
       }
     });
@@ -165,7 +168,16 @@ function ZenCastChart() {
   );
 }
 
+function formatCurrency(value: string | null) {
+    if (!value) return "₹0";
+    return `₹${Number(value).toLocaleString("en-IN")}`;
+}
+
 export function DashboardClient() {
+  const searchParams = useSearchParams();
+  const netWorth = searchParams.get('netWorth') ?? '0';
+  const monthlySavings = searchParams.get('monthlySavings') ?? '0';
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
       <div className="lg:col-span-5 grid gap-4">
@@ -176,9 +188,9 @@ export function DashboardClient() {
               <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">₹12,45,230</div>
+              <div className="text-2xl font-bold">{formatCurrency(netWorth)}</div>
               <p className="text-xs text-muted-foreground">
-                +20.1% from last month
+                Based on your provided data.
               </p>
             </CardContent>
           </Card>
@@ -204,9 +216,9 @@ export function DashboardClient() {
               <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">₹25,000</div>
-              <p className="text-xs text-muted-foreground">
-                +15% from last month
+              <div className="text-2xl font-bold">{formatCurrency(monthlySavings)}</div>
+               <p className="text-xs text-muted-foreground">
+                Your current monthly target.
               </p>
             </CardContent>
           </Card>

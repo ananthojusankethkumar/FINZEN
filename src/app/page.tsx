@@ -47,7 +47,7 @@ export default function LandingPage() {
             <span className="text-xl font-bold tracking-tight">Finzen</span>
           </Link>
           <Button asChild variant="ghost">
-            <Link href="/dashboard">Sign In</Link>
+            <Link href="/onboarding">Sign In</Link>
           </Button>
         </div>
       </header>
@@ -63,7 +63,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-8">
               <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                <Link href="/dashboard">
+                <Link href="/onboarding">
                   Get Started for Free <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
