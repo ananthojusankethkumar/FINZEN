@@ -31,18 +31,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
 }) {
   const user = auth.currentUser;
-
-  // This is a server component, but auth state is client-side.
-  // A proper implementation would use a client component with useEffect to check auth state,
-  // or a server-side session management solution.
-  // For this prototype, we'll assume a user is logged in if they hit this page,
-  // but a real app needs more robust protection.
-  
-  // A simple redirect if no user is found on the server (might not work as expected with client-side auth)
-  // if (!user) {
-  //   redirect('/login');
-  // }
-
+  const userDisplayName = user?.displayName?.split(' ')[0] || "User";
 
   return (
     <SidebarProvider>
@@ -76,7 +65,7 @@ export default async function DashboardLayout({
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="https://picsum.photos/100" alt="@shadcn" data-ai-hint="person avatar" />
-                  <AvatarFallback>U</AvatarFallback>
+                  <AvatarFallback>{userDisplayName.charAt(0)}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>

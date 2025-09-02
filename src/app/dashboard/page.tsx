@@ -1,13 +1,14 @@
 import { Suspense } from "react";
 import { DashboardClient } from "@/components/finzen/dashboard-client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { auth } from "@/lib/firebase";
 
 function DashboardLoading() {
   return (
     <div className="space-y-6">
        <div>
         <h1 className="text-2xl font-bold tracking-tight font-headline">
-          Welcome back, User!
+          Welcome back!
         </h1>
         <p className="text-muted-foreground">
           Here is your financial overview. Keep up the great work!
@@ -33,11 +34,14 @@ function DashboardLoading() {
 
 
 export default function DashboardPage() {
+    const user = auth.currentUser;
+    const userDisplayName = user?.displayName?.split(' ')[0] || "User";
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight font-headline">
-          Welcome back, User!
+          Welcome back, {userDisplayName}!
         </h1>
         <p className="text-muted-foreground">
           Here is your financial overview. Keep up the great work!

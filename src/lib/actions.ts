@@ -28,6 +28,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import { redirect } from "next/navigation";
 
@@ -82,13 +83,17 @@ export async function signup(prevState: any, formData: FormData) {
   }
 
   try {
-    await createUserWithEmailAndPassword(
+    const userCredential = await createUserWithEmailAndPassword(
       auth,
       validatedFields.data.email,
       validatedFields.data.password
     );
-    // Here you would typically save the additional user data (fullName, phoneNumber)
-    // to a database like Firestore, linked to the user's UID.
+    
+    // Update user's profile with full name
+    await updateProfile(userCredential.user, {
+        displayName: validatedFields.data.fullName
+    });
+
   } catch (e: any) {
      if (e.code === 'auth/email-already-in-use') {
         return { message: 'This email address is already in use.', errors: null };
